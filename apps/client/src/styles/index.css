@@ -1,0 +1,151 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import '@fontsource-variable/inter';
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * SyncBoard design tokens. Neutral Scandinavian workspace, deep navy sidebar,
+ * indigo accent. Every colour used by components comes from these variables.
+ */
+:root {
+  --radius: 0.625rem;
+  --background: oklch(0.982 0.003 264);
+  --foreground: oklch(0.22 0.02 266);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.22 0.02 266);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.22 0.02 266);
+  --primary: oklch(0.51 0.2 277);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.955 0.006 264);
+  --secondary-foreground: oklch(0.28 0.02 266);
+  --muted: oklch(0.955 0.005 264);
+  --muted-foreground: oklch(0.52 0.02 264);
+  --accent: oklch(0.95 0.02 277);
+  --accent-foreground: oklch(0.36 0.12 277);
+  --destructive: oklch(0.58 0.21 25);
+  --destructive-foreground: oklch(0.99 0 0);
+  --success: oklch(0.62 0.15 160);
+  --warning: oklch(0.75 0.15 75);
+  --border: oklch(0.915 0.006 264);
+  --input: oklch(0.9 0.008 264);
+  --ring: oklch(0.6 0.17 277);
+  --column: oklch(0.962 0.005 264);
+
+  --sidebar: oklch(0.205 0.035 268);
+  --sidebar-foreground: oklch(0.86 0.015 268);
+  --sidebar-muted: oklch(0.64 0.03 268);
+  --sidebar-accent: oklch(0.27 0.04 268);
+  --sidebar-accent-foreground: oklch(0.98 0 0);
+  --sidebar-border: oklch(0.29 0.035 268);
+
+  --priority-low: oklch(0.6 0.02 264);
+  --priority-medium: oklch(0.62 0.13 240);
+  --priority-high: oklch(0.7 0.16 60);
+  --priority-urgent: oklch(0.6 0.21 22);
+}
+
+.dark {
+  --background: oklch(0.165 0.012 266);
+  --foreground: oklch(0.94 0.008 264);
+  --card: oklch(0.205 0.015 266);
+  --card-foreground: oklch(0.94 0.008 264);
+  --popover: oklch(0.215 0.016 266);
+  --popover-foreground: oklch(0.94 0.008 264);
+  --primary: oklch(0.66 0.17 277);
+  --primary-foreground: oklch(0.16 0.02 277);
+  --secondary: oklch(0.255 0.017 266);
+  --secondary-foreground: oklch(0.92 0.008 264);
+  --muted: oklch(0.245 0.015 266);
+  --muted-foreground: oklch(0.68 0.018 264);
+  --accent: oklch(0.29 0.05 277);
+  --accent-foreground: oklch(0.88 0.06 277);
+  --destructive: oklch(0.65 0.2 25);
+  --border: oklch(0.29 0.016 266);
+  --input: oklch(0.32 0.018 266);
+  --ring: oklch(0.62 0.16 277);
+  --column: oklch(0.19 0.014 266);
+
+  --sidebar: oklch(0.135 0.02 268);
+  --sidebar-foreground: oklch(0.84 0.015 268);
+  --sidebar-muted: oklch(0.6 0.025 268);
+  --sidebar-accent: oklch(0.215 0.03 268);
+  --sidebar-border: oklch(0.23 0.025 268);
+}
+
+@theme inline {
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-column: var(--column);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-muted: var(--sidebar-muted);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-priority-low: var(--priority-low);
+  --color-priority-medium: var(--priority-medium);
+  --color-priority-high: var(--priority-high);
+  --color-priority-urgent: var(--priority-urgent);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+  ::selection {
+    background: color-mix(in oklab, var(--primary) 25%, transparent);
+  }
+}
+
+@layer components {
+  .label-chip {
+    background-color: oklch(0.75 0.09 var(--label-hue) / 0.16);
+    color: oklch(0.5 0.12 var(--label-hue));
+  }
+  .dark .label-chip {
+    background-color: oklch(0.6 0.09 var(--label-hue) / 0.2);
+    color: oklch(0.82 0.09 var(--label-hue));
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklab, var(--muted-foreground) 35%, transparent) transparent;
+  }
+}

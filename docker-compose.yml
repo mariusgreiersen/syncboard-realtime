@@ -1,0 +1,65 @@
+# SyncBoard: PostgreSQL + Node.js API/Socket.IO server + nginx-served React client.
+#   cp .env.example .env && docker compose up --build
+#   App:  http://localhost:8080   (nginx proxies /api and /socket.io to the server)
+#   API:  http://localhost:3001   (direct, for debugging)
+name: syncboard
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-syncboard}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-syncboard}
+      POSTGRES_DB: ${POSTGRES_DB:-syncboard}
+    ports:
+      - "${POSTGRES_HOST_PORT:-5434}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: server
+    init: true
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DATABASE_URL: postgres://${POSTGRES_USER:-syncboard}:${POSTGRES_PASSWORD:-syncboard}@postgres:5432/${POSTGRES_DB:-syncboard}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:8080}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      TRUST_PROXY: "true"
+      DEMO_MODE: ${DEMO_MODE:-true}
+      DEMO_RESET_INTERVAL_MINUTES: ${DEMO_RESET_INTERVAL_MINUTES:-0}
+      SEED_DEMO: ${SEED_DEMO:-true}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3001/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    stop_grace_period: 15s
+
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: client
+    ports:
+      - "8080:80"
+    depends_on:
+      server:
+        condition: service_healthy
+
+volumes:
+  postgres-data:
